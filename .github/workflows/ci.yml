@@ -20,6 +20,7 @@ jobs:
     - name: Install dependencies
       run: |
         sudo apt update
+        sudo apt -y upgrade
         sudo apt install -y build-essential cmake lcov genhtml g++ gcov
 
     - name: Configure project with coverage flags
