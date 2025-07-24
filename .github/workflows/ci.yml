@@ -38,6 +38,8 @@ jobs:
       with:
         name: coverage-report
         path: build/coverage
+    - name: List coverage directory
+      run: ls -la build/coverage
 
     - name: Deploy coverage report to GitHub Pages
       if: github.ref == 'refs/heads/master'
