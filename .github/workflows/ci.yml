@@ -1,0 +1,58 @@
+name: CI - Build, Test, Coverage and Publish
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build-and-coverage:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    # Установка зависимостей для сборки, тестов и покрытия
+    - name: Install dependencies
+      run: |
+        sudo apt update
+        sudo apt install -y build-essential cmake lcov genhtml g++ gcov
+
+    - name: Configure project with coverage flags
+      run: cmake -S . -B build -DCOVERAGE=ON
+
+    - name: Build project
+      run: cmake --build build
+
+    - name: Run tests
+      run: ctest --test-dir build --output-on-failure
+
+    - name: Generate coverage report
+      run: |
+        # Очистка старого отчёта
+        rm -rf build/coverage
+        mkdir -p build/coverage
+        # Захват покрытия (замена пути --directory под вашу сборку)
+        lcov --capture --directory build --output-file build/coverage/coverage.info --ignore-errors inconsistent
+        # Удаление системных и ненужных путей
+        lcov --remove build/coverage/coverage.info '/usr/*' --output-file build/coverage/coverage_filtered.info
+        # Генерация HTML-отчёта
+        genhtml --output-directory build/coverage build/coverage/coverage_filtered.info
+
+    - name: Upload coverage report as artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: coverage-report
+        path: build/coverage
+
+    - name: Deploy coverage report to GitHub Pages
+      if: github.ref == 'refs/heads/main'  # Публикуем только из main ветки
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./build/coverage
+
