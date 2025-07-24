@@ -38,7 +38,7 @@ if(COVERAGE AND LCOV AND GENHTML)
 
     add_custom_target(coverage
         COMMAND ${CMAKE_COMMAND} -E remove_directory ${COVERAGE_OUTPUT_DIR}
-        COMMAND ${LCOV} --capture --directory ${CMAKE_BINARY_DIR} --output-file coverage.info --ignore-errors inconsistent
+        COMMAND ${LCOV} --capture --directory ${CMAKE_BINARY_DIR} --output-file coverage.info
         COMMAND ${LCOV} --remove coverage.info '/usr/*' --output-file coverage_filtered.info
         COMMAND ${GENHTML} --output-directory ${COVERAGE_OUTPUT_DIR} coverage_filtered.info
         COMMENT "Generating code coverage report"
