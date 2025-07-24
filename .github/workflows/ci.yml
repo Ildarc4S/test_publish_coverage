@@ -28,7 +28,7 @@ jobs:
           cmake -DCOVERAGE=ON .. &&
           cmake --build . &&
           ctest --output-on-failure &&
-          lcov --capture --directory . --output-file coverage.info --ignore-errors inconsistent &&
+          lcov --capture --directory . --output-file coverage.info
           lcov --remove coverage.info '/usr/*' --output-file coverage_filtered.info &&
           genhtml --output-directory coverage coverage_filtered.info
         "
