@@ -1,4 +1,4 @@
-name : AAAAA
+name: Cleanup deployments and build coverage
 
 on:
   push:
@@ -9,9 +9,20 @@ on:
       - '*'
 
 jobs:
-  build:
+  cleanup:
     runs-on: ubuntu-latest
+    permissions: write-all
+    steps:
+      - name: Delete Deployment Environment
+        uses: strumwolf/delete-deployment-environment@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          environment: github-pages
+          onlyRemoveDeployments: true
 
+  build:
+    needs: cleanup
+    runs-on: ubuntu-latest
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
